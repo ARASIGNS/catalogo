@@ -221,20 +221,61 @@ button{font:inherit}
   .hint{display:none}
 }
 
+
 @media (max-width:600px){
   .top-actions .icon-btn:first-of-type,
   .top-actions .icon-btn:nth-of-type(2){display:none}
   .pill{min-width:62px;padding:7px 8px;font-size:12px}
   .viewer{padding-bottom:48px}
-  .book{height:min(calc(100dvh - 62px), 86vh);aspect-ratio:595.5/842.2}
+  .book{
+    height:min(calc(100dvh - 62px), 86vh);
+    width:auto;
+    max-width:100vw;
+    aspect-ratio:595.5/842.2;
+  }
   .spread{display:block}
   .sheet.left{display:none}
-  .sheet.right{width:100%;height:100%;box-shadow:none}
+  .sheet.right{
+    display:block;
+    width:100%;
+    height:100%;
+    box-shadow:none;
+  }
   .spine{display:none}
+
+  /* Critical fix: on mobile the turning sheet is the WHOLE page. */
+  .page-turn{
+    display:block;
+    width:100%;
+    height:100%;
+    left:0;
+    right:auto;
+    top:0;
+    bottom:auto;
+    transform-origin:left center;
+  }
+  .page-turn .turn-face{
+    width:100%;
+    height:100%;
+    inset:0;
+    box-shadow:none;
+  }
+  .page-turn .turn-face img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    background:#111;
+  }
+  .page-turn .turn-back img{
+    transform:none;
+  }
+
   .nav{width:40px;height:40px;font-size:22px}
-  .nav.prev{left:6px} .nav.next{right:6px}
+  .nav.prev{left:6px}
+  .nav.next{right:6px}
   .thumbs{display:none}
 }
+
 </style>
 </head>
 <body>
@@ -356,6 +397,7 @@ function turnPage(dir) {
     turnFront.src = src(currentRight);
     turnBack.src = src(nextRight);
     turn.classList.add('active');
+    turn.classList.toggle('mobile-turn', isMobile());
     turn.style.transformOrigin = 'left center';
 
     requestAnimationFrame(() => {
@@ -367,7 +409,7 @@ function turnPage(dir) {
       spreadStart = target;
       turn.style.transition = 'none';
       turn.style.transform = 'rotateY(0deg)';
-      turn.classList.remove('active');
+      turn.classList.remove('active','mobile-turn');
       render();
       busy = false;
     }, 850);
@@ -379,6 +421,7 @@ function turnPage(dir) {
     turnFront.src = src(previous);
     turnBack.src = src(currentLeft);
     turn.classList.add('active');
+    turn.classList.toggle('mobile-turn', isMobile());
     turn.style.transformOrigin = 'right center';
     turn.style.transform = 'rotateY(180deg)';
 
@@ -390,7 +433,7 @@ function turnPage(dir) {
     setTimeout(() => {
       spreadStart = target;
       turn.style.transition = 'none';
-      turn.classList.remove('active');
+      turn.classList.remove('active','mobile-turn');
       render();
       busy = false;
     }, 850);
