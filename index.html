@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo Digital — Arasigns</title>
+<meta name="theme-color" content="#111111">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(circle at 50% 35%, #292929 0%, #111 48%, #070707 100%);
+  color:#fff;
+  user-select:none;
+}
+.topbar{
+  height:64px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 22px;background:rgba(10,10,10,.88);backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(255,255,255,.08);position:relative;z-index:20;
+}
+.brand{font-weight:800;letter-spacing:.5px}
+.brand span{color:#ff7a24}
+.controls{display:flex;gap:8px;align-items:center}
+button{
+  border:1px solid rgba(255,255,255,.12);background:#1d1d1d;color:#fff;
+  border-radius:10px;padding:9px 13px;cursor:pointer;font-size:14px;
+  transition:.2s;box-shadow:0 4px 15px rgba(0,0,0,.18)
+}
+button:hover{background:#2a2a2a;transform:translateY(-1px)}
+.counter{min-width:100px;text-align:center;font-size:13px;color:#ddd}
+.stage{
+  height:calc(100vh - 124px);display:flex;align-items:center;justify-content:center;
+  perspective:2200px;padding:18px;
+}
+.book{
+  position:relative;height:min(86vh,780px);aspect-ratio:1/1;
+  transform-style:preserve-3d;filter:drop-shadow(0 25px 30px rgba(0,0,0,.55));
+}
+.page{
+  position:absolute;inset:0;background:#111;overflow:hidden;
+  transform-origin:left center;transform-style:preserve-3d;
+  transition:transform .82s cubic-bezier(.2,.75,.18,1);
+  border-radius:3px 10px 10px 3px;
+  box-shadow:inset -12px 0 20px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.2);
+}
+.page img{width:100%;height:100%;object-fit:cover;display:block}
+.page::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.08),transparent 18%,transparent 80%,rgba(0,0,0,.12));
+}
+.page.flipped{transform:rotateY(-180deg)}
+.page.flipped img{backface-visibility:hidden}
+.page .back{
+  position:absolute;inset:0;transform:rotateY(180deg);backface-visibility:hidden;
+  background:#111;
+}
+.progress{height:60px;display:flex;align-items:center;justify-content:center;gap:10px}
+.progressbar{width:min(460px,60vw);height:4px;background:#292929;border-radius:99px;overflow:hidden}
+.progressbar i{display:block;height:100%;background:linear-gradient(90deg,#ff7a24,#ef2835);width:0%;transition:.25s}
+.hint{position:fixed;bottom:11px;left:50%;transform:translateX(-50%);font-size:12px;color:#aaa;z-index:10}
+@media(max-width:700px){
+  .topbar{height:58px;padding:0 12px}
+  .brand{font-size:14px}
+  .controls button{padding:8px 9px;font-size:12px}
+  .counter{min-width:70px;font-size:12px}
+  .stage{height:calc(100vh - 108px);padding:8px}
+  .book{width:min(94vw,78vh);height:auto;aspect-ratio:1/1}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span>●</span> arasigns <small>• catálogo digital</small></div>
+  <div class="controls">
+    <button id="prev" title="Página anterior">◀</button>
+    <div class="counter" id="counter">1 / 46</div>
+    <button id="next" title="Próxima página">▶</button>
+    <button id="fullscreen" title="Tela cheia">⛶</button>
+  </div>
+</header>
+
+<main class="stage">
+  <div class="book" id="book"></div>
+</main>
+
+<div class="progress">
+  <div class="progressbar"><i id="bar"></i></div>
+</div>
+<div class="hint">Arraste a página ou clique nas laterais para folhear</div>
+
+<script>
+const pages = ["pages/pagina-01.jpg", "pages/pagina-02.jpg", "pages/pagina-03.jpg", "pages/pagina-04.jpg", "pages/pagina-05.jpg", "pages/pagina-06.jpg", "pages/pagina-07.jpg", "pages/pagina-08.jpg", "pages/pagina-09.jpg", "pages/pagina-10.jpg", "pages/pagina-11.jpg", "pages/pagina-12.jpg", "pages/pagina-13.jpg", "pages/pagina-14.jpg", "pages/pagina-15.jpg", "pages/pagina-16.jpg", "pages/pagina-17.jpg", "pages/pagina-18.jpg", "pages/pagina-19.jpg", "pages/pagina-20.jpg", "pages/pagina-21.jpg", "pages/pagina-22.jpg", "pages/pagina-23.jpg", "pages/pagina-24.jpg", "pages/pagina-25.jpg", "pages/pagina-26.jpg", "pages/pagina-27.jpg", "pages/pagina-28.jpg", "pages/pagina-29.jpg", "pages/pagina-30.jpg", "pages/pagina-31.jpg", "pages/pagina-32.jpg", "pages/pagina-33.jpg", "pages/pagina-34.jpg", "pages/pagina-35.jpg", "pages/pagina-36.jpg", "pages/pagina-37.jpg", "pages/pagina-38.jpg", "pages/pagina-39.jpg", "pages/pagina-40.jpg", "pages/pagina-41.jpg", "pages/pagina-42.jpg", "pages/pagina-43.jpg", "pages/pagina-44.jpg", "pages/pagina-45.jpg", "pages/pagina-46.jpg"];
+const book = document.getElementById('book');
+const counter = document.getElementById('counter');
+const bar = document.getElementById('bar');
+let current = 0;
+let startX = null;
+
+pages.forEach((src, i) => {
+  const p = document.createElement('div');
+  p.className = 'page';
+  p.style.zIndex = pages.length - i;
+  const img = document.createElement('img');
+  img.src = src;
+  img.alt = `Página ${i+1}`;
+  p.appendChild(img);
+  book.appendChild(p);
+});
+
+const pageEls = [...document.querySelectorAll('.page')];
+
+let dragStartX = null;
+let dragStartCurrent = 0;
+let isDragging = false;
+let dragMoved = false;
+
+function update(){
+  pageEls.forEach((p, i) => {
+    p.classList.toggle('flipped', i < current);
+    p.classList.remove('dragging');
+    p.style.removeProperty('transform');
+  });
+  counter.textContent = `${Math.min(current+1, pages.length)} / ${pages.length}`;
+  bar.style.width = `${(current/(pages.length-1))*100}%`;
+}
+
+function animateTurn(direction){
+  const target = direction > 0 ? current : current - 1;
+  if(direction > 0 && current >= pages.length) return;
+  if(direction < 0 && current <= 0) return;
+
+  const p = pageEls[target];
+  p.classList.add('flipping');
+
+  // A tiny lift makes the sheet feel lighter and less "mechanical".
+  p.style.transition = 'transform .76s cubic-bezier(.18,.76,.17,1), box-shadow .55s ease';
+  p.style.boxShadow = direction > 0
+    ? 'inset -22px 0 34px rgba(0,0,0,.10), 14px 5px 30px rgba(0,0,0,.20)'
+    : 'inset 22px 0 34px rgba(0,0,0,.08), -10px 5px 25px rgba(0,0,0,.16)';
+
+  current += direction;
+  update();
+
+  // Reapply the subtle shadow to the sheet that is moving.
+  requestAnimationFrame(() => {
+    p.classList.add('flipping');
+    p.style.boxShadow = direction > 0
+      ? 'inset -22px 0 34px rgba(0,0,0,.10), 14px 5px 30px rgba(0,0,0,.20)'
+      : 'inset 22px 0 34px rgba(0,0,0,.08), -10px 5px 25px rgba(0,0,0,.16)';
+  });
+
+  setTimeout(() => {
+    p.classList.remove('flipping');
+    p.style.removeProperty('box-shadow');
+  }, 780);
+}
+
+function next(){ animateTurn(1); }
+function prev(){ animateTurn(-1); }
+
+document.getElementById('next').onclick = next;
+document.getElementById('prev').onclick = prev;
+document.getElementById('fullscreen').onclick = () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { current=0; update(); }
+  if (e.key === 'End') { current=pages.length; update(); }
+});
+
+// Mouse/touch: drag naturally toward the next/previous page.
+book.addEventListener('pointerdown', e => {
+  dragStartX = e.clientX;
+  dragStartCurrent = current;
+  isDragging = true;
+  dragMoved = false;
+  book.setPointerCapture?.(e.pointerId);
+});
+
+book.addEventListener('pointermove', e => {
+  if(!isDragging || dragStartX === null) return;
+  const dx = e.clientX - dragStartX;
+  if(Math.abs(dx) < 5) return;
+  dragMoved = true;
+
+  const turningForward = dx < 0;
+  const idx = turningForward ? current : current - 1;
+  if(idx < 0 || idx >= pages.length) return;
+
+  const p = pageEls[idx];
+  p.classList.add('dragging');
+
+  const progress = Math.min(Math.abs(dx) / (book.clientWidth * .72), 1);
+  const angle = turningForward ? -progress * 178 : -180 + progress * 178;
+  p.style.transform = `rotateY(${angle}deg)`;
+  p.style.boxShadow = turningForward
+    ? `inset -${12 + progress*24}px 0 ${20 + progress*28}px rgba(0,0,0,.12), ${progress*18}px 5px ${progress*28}px rgba(0,0,0,.18)`
+    : `inset ${12 + progress*24}px 0 ${20 + progress*28}px rgba(0,0,0,.08), -${progress*18}px 5px ${progress*24}px rgba(0,0,0,.14)`;
+});
+
+book.addEventListener('pointerup', e => {
+  if(!isDragging) return;
+  const dx = e.clientX - dragStartX;
+  isDragging = false;
+
+  if(Math.abs(dx) > book.clientWidth * .18) {
+    if(dx < 0) next(); else prev();
+  } else {
+    // Snap the page gently back.
+    update();
+  }
+  dragStartX = null;
+});
+
+book.addEventListener('pointercancel', () => {
+  isDragging = false;
+  dragStartX = null;
+  update();
+});
+
+// Click only when it wasn't a real drag.
+book.addEventListener('click', e => {
+  if(dragMoved){ dragMoved = false; return; }
+  const rect = book.getBoundingClientRect();
+  if (e.clientX - rect.left > rect.width/2) next();
+  else prev();
+});
+update();
+</script>
+</body>
+</html>
