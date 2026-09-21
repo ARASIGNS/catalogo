@@ -30,9 +30,14 @@ button{
 }
 button:hover{background:#2a2a2a;transform:translateY(-1px)}
 .counter{min-width:100px;text-align:center;font-size:13px;color:#ddd}
-.stage{
-  height:calc(100vh - 124px);display:flex;align-items:center;justify-content:center;
-  perspective:2200px;padding:18px;
+ .stage{
+  height:calc(100vh - 58px);
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  perspective:2200px;
+  padding:0;
 }
 .book{
   position:relative;height:min(84vh,820px);aspect-ratio:595.5/842.2;
@@ -56,18 +61,36 @@ button:hover{background:#2a2a2a;transform:translateY(-1px)}
   position:absolute;inset:0;transform:rotateY(180deg);backface-visibility:hidden;
   background:#111;
 }
-.progress{height:60px;display:flex;align-items:center;justify-content:center;gap:10px}
+.progress{display:none}
 .progressbar{width:min(460px,60vw);height:4px;background:#292929;border-radius:99px;overflow:hidden}
 .progressbar i{display:block;height:100%;background:linear-gradient(90deg,#ff7a24,#ef2835);width:0%;transition:.25s}
-.hint{position:fixed;bottom:11px;left:50%;transform:translateX(-50%);font-size:12px;color:#aaa;z-index:10}
+.hint{display:none}
 @media(max-width:700px){
-  .topbar{height:58px;padding:0 12px}
+  html,body{width:100%;height:100%;overflow:hidden}
+  .topbar{height:56px;min-height:56px;padding:0 9px}
   .brand{font-size:14px}
-  .controls button{padding:8px 9px;font-size:12px}
-  .counter{min-width:70px;font-size:12px}
-  .stage{height:calc(100vh - 108px);padding:8px;align-items:center;justify-content:center}
-  .book{width:min(94vw,78vh);height:auto;aspect-ratio:1/1}
-  .hint{display:none}
+  .brand small{display:none}
+  .controls{gap:5px}
+  .controls button{padding:7px 9px;font-size:12px}
+  .counter{min-width:58px;font-size:12px}
+  .stage{
+    height:calc(100dvh - 56px);
+    width:100%;
+    padding:0;
+    align-items:center;
+    justify-content:center;
+  }
+  .book{
+    height:min(calc(100dvh - 56px), 100%);
+    width:auto;
+    max-width:100vw;
+    aspect-ratio:595.5/842.2;
+  }
+  .page{border-radius:0}
+  .hint,.progress{display:none}
+}
+@media(min-width:701px){
+  .book{height:min(calc(100vh - 70px), 94vh);max-height:900px}
 }
 </style>
 </head>
