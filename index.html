@@ -2,260 +2,452 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Catálogo Digital — Arasigns</title>
-<meta name="theme-color" content="#111111">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080808">
+<title>Arasigns — Catálogo Digital</title>
 <style>
+:root {
+  --orange:#ff7a24;
+  --red:#ef2835;
+  --yellow:#ffe500;
+  --bg:#080808;
+  --panel:rgba(20,20,20,.78);
+  --line:rgba(255,255,255,.12);
+}
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden}
 body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:
-    radial-gradient(circle at 50% 35%, #292929 0%, #111 48%, #070707 100%);
+  font-family:Inter,Segoe UI,Arial,sans-serif;
   color:#fff;
+  background:
+    radial-gradient(ellipse at 50% 48%, #242424 0%, #111 42%, #050505 100%);
   user-select:none;
 }
+button{font:inherit}
 .topbar{
-  height:64px;display:flex;align-items:center;justify-content:space-between;
-  padding:0 22px;background:rgba(10,10,10,.88);backdrop-filter:blur(10px);
-  border-bottom:1px solid rgba(255,255,255,.08);position:relative;z-index:20;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 24px;
+  background:rgba(5,5,5,.78);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(16px);
+  position:relative;
+  z-index:50;
 }
-.brand{font-weight:800;letter-spacing:.5px}
-.brand span{color:#ff7a24}
-.controls{display:flex;gap:8px;align-items:center}
-button{
-  border:1px solid rgba(255,255,255,.12);background:#1d1d1d;color:#fff;
-  border-radius:10px;padding:9px 13px;cursor:pointer;font-size:14px;
-  transition:.2s;box-shadow:0 4px 15px rgba(0,0,0,.18)
+.brand{
+  display:flex;align-items:center;gap:11px;
+  font-weight:800;letter-spacing:.3px;
+  white-space:nowrap;
 }
-button:hover{background:#2a2a2a;transform:translateY(-1px)}
-.counter{min-width:100px;text-align:center;font-size:13px;color:#ddd}
- .stage{
-  height:calc(100vh - 58px);
-  width:100%;
+.brand-mark{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--orange);
+  box-shadow:0 0 14px rgba(255,122,36,.45);
+}
+.brand small{font-weight:500;color:#aaa;margin-left:2px}
+.top-actions{display:flex;align-items:center;gap:8px}
+.pill{
+  min-width:82px;text-align:center;
+  padding:8px 12px;border-radius:10px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.09);
+  color:#eee;font-size:13px;
+}
+.icon-btn{
+  width:38px;height:38px;border-radius:11px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.06);
+  color:#fff;cursor:pointer;
+  display:grid;place-items:center;font-size:17px;
+  transition:.2s ease;
+}
+.icon-btn:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+
+.viewer{
+  height:calc(100vh - 64px);
+  position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
-  perspective:2200px;
-  padding:0;
+  padding:16px 70px 88px;
 }
 .book{
-  position:relative;height:min(84vh,820px);aspect-ratio:595.5/842.2;
-  transform-style:preserve-3d;filter:drop-shadow(0 25px 30px rgba(0,0,0,.55));
+  position:relative;
+  height:min(calc(100vh - 118px), 820px);
+  aspect-ratio:1.4142 / 1;
+  max-width:calc(100vw - 130px);
+  transform-style:preserve-3d;
+  perspective:2600px;
+  filter:drop-shadow(0 30px 45px rgba(0,0,0,.55));
 }
-.page{
-  position:absolute;inset:0;background:#111;overflow:hidden;
-  transform-origin:left center;transform-style:preserve-3d;
-  transition:transform .82s cubic-bezier(.2,.75,.18,1);
-  border-radius:3px 10px 10px 3px;
-  box-shadow:inset -12px 0 20px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.2);
+.spread{
+  position:absolute;
+  inset:0;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  background:#111;
+  border-radius:5px;
+  overflow:hidden;
 }
-.page img{width:100%;height:100%;object-fit:contain;display:block}
-.page::after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(90deg,rgba(0,0,0,.08),transparent 18%,transparent 80%,rgba(0,0,0,.12));
-}
-.page.flipped{transform:rotateY(-180deg)}
-.page.flipped img{backface-visibility:hidden}
-.page .back{
-  position:absolute;inset:0;transform:rotateY(180deg);backface-visibility:hidden;
+.sheet{
+  position:relative;
+  min-width:0;min-height:0;
+  overflow:hidden;
   background:#111;
 }
-.progress{display:none}
-.progressbar{width:min(460px,60vw);height:4px;background:#292929;border-radius:99px;overflow:hidden}
-.progressbar i{display:block;height:100%;background:linear-gradient(90deg,#ff7a24,#ef2835);width:0%;transition:.25s}
-.hint{display:none}
-@media(max-width:700px){
-  html,body{width:100%;height:100%;overflow:hidden}
-  .topbar{height:56px;min-height:56px;padding:0 9px}
+.sheet img{
+  width:100%;height:100%;
+  display:block;
+  object-fit:contain;
+  background:#111;
+}
+.sheet.left{box-shadow:inset -18px 0 28px rgba(0,0,0,.18)}
+.sheet.right{box-shadow:inset 18px 0 28px rgba(0,0,0,.18)}
+.spine{
+  position:absolute;z-index:8;top:0;bottom:0;left:50%;
+  width:20px;transform:translateX(-50%);
+  background:linear-gradient(90deg,
+    rgba(0,0,0,.22),
+    rgba(255,255,255,.07) 35%,
+    rgba(0,0,0,.32) 52%,
+    rgba(0,0,0,.05));
+  pointer-events:none;
+  mix-blend-mode:multiply;
+}
+.page-turn{
+  position:absolute;
+  z-index:20;
+  top:0;bottom:0;right:0;
+  width:50%;
+  transform-origin:left center;
+  transform-style:preserve-3d;
+  pointer-events:none;
+  visibility:hidden;
+}
+.page-turn.active{visibility:visible}
+.turn-face{
+  position:absolute;inset:0;
+  backface-visibility:hidden;
+  overflow:hidden;
+  background:#111;
+  box-shadow:-15px 0 30px rgba(0,0,0,.25);
+}
+.turn-face img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.turn-back{
+  transform:rotateY(180deg);
+  box-shadow:15px 0 30px rgba(0,0,0,.18);
+}
+.turn-back img{transform:scaleX(-1)}
+
+.nav{
+  position:absolute;z-index:40;top:50%;transform:translateY(-50%);
+  width:54px;height:54px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(8,8,8,.64);
+  color:#fff;font-size:30px;line-height:1;
+  cursor:pointer;backdrop-filter:blur(12px);
+  box-shadow:0 10px 28px rgba(0,0,0,.28);
+  transition:.22s ease;
+}
+.nav:hover{background:rgba(255,255,255,.12);transform:translateY(-50%) scale(1.05)}
+.nav.prev{left:18px}
+.nav.next{right:18px}
+
+.thumbs{
+  position:absolute;
+  z-index:45;
+  bottom:14px;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(860px,calc(100vw - 150px));
+  display:flex;align-items:end;gap:8px;
+  padding:8px 10px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  background:rgba(5,5,5,.52);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  backdrop-filter:blur(14px);
+}
+.thumbs::-webkit-scrollbar{display:none}
+.thumb{
+  flex:0 0 auto;
+  width:62px;
+  cursor:pointer;
+  opacity:.62;
+  transition:.2s;
+  text-align:center;
+  color:#aaa;
+  font-size:10px;
+}
+.thumb img{
+  width:62px;height:78px;
+  object-fit:cover;
+  display:block;
+  border-radius:5px;
+  border:2px solid transparent;
+  background:#111;
+}
+.thumb.active{opacity:1;color:#fff}
+.thumb.active img{border-color:#fff}
+.thumb:hover{opacity:1}
+
+.hint{
+  position:absolute;z-index:30;bottom:6px;left:50%;
+  transform:translateX(-50%);
+  color:#777;font-size:11px;
+}
+
+@media (max-width:900px){
+  .topbar{height:56px;padding:0 10px}
   .brand{font-size:14px}
   .brand small{display:none}
-  .controls{gap:5px}
-  .controls button{padding:7px 9px;font-size:12px}
-  .counter{min-width:58px;font-size:12px}
-  .stage{
-    height:calc(100dvh - 56px);
-    width:100%;
-    padding:0;
-    align-items:center;
-    justify-content:center;
-  }
+  .viewer{height:calc(100dvh - 56px);padding:0 0 54px}
   .book{
-    height:min(calc(100dvh - 56px), 100%);
+    height:min(calc(100dvh - 68px), 92vh);
     width:auto;
     max-width:100vw;
-    aspect-ratio:595.5/842.2;
+    aspect-ratio:1.4142 / 1;
   }
-  .page{border-radius:0}
-  .hint,.progress{display:none}
+  .nav{width:44px;height:44px;font-size:24px}
+  .nav.prev{left:8px} .nav.next{right:8px}
+  .thumbs{bottom:5px;width:calc(100vw - 18px);padding:5px;gap:5px}
+  .thumb,.thumb img{width:45px}
+  .thumb img{height:58px}
+  .hint{display:none}
 }
-@media(min-width:701px){
-  .book{height:min(calc(100vh - 70px), 94vh);max-height:900px}
+
+@media (max-width:600px){
+  .top-actions .icon-btn:first-of-type,
+  .top-actions .icon-btn:nth-of-type(2){display:none}
+  .pill{min-width:62px;padding:7px 8px;font-size:12px}
+  .viewer{padding-bottom:48px}
+  .book{height:min(calc(100dvh - 62px), 86vh);aspect-ratio:595.5/842.2}
+  .spread{display:block}
+  .sheet.left{display:none}
+  .sheet.right{width:100%;height:100%;box-shadow:none}
+  .spine{display:none}
+  .nav{width:40px;height:40px;font-size:22px}
+  .nav.prev{left:6px} .nav.next{right:6px}
+  .thumbs{display:none}
 }
 </style>
 </head>
 <body>
+
 <header class="topbar">
-  <div class="brand"><span>●</span> arasigns <small>• catálogo digital</small></div>
-  <div class="controls">
-    <button id="prev" title="Página anterior">◀</button>
-    <div class="counter" id="counter">1 / 46</div>
-    <button id="next" title="Próxima página">▶</button>
-    <button id="fullscreen" title="Tela cheia">⛶</button>
+  <div class="brand">
+    <span class="brand-mark"></span>
+    <span>arasigns</span>
+    <small>• catálogo digital</small>
+  </div>
+  <div class="top-actions">
+    <button class="icon-btn" id="gridBtn" title="Miniaturas">▦</button>
+    <div class="pill" id="counter">1 – 2 / 46</div>
+    <button class="icon-btn" id="fullBtn" title="Tela cheia">⛶</button>
   </div>
 </header>
 
-<main class="stage">
-  <div class="book" id="book"></div>
-</main>
+<main class="viewer" id="viewer">
+  <button class="nav prev" id="prev" aria-label="Anterior">‹</button>
 
-<div class="progress">
-  <div class="progressbar"><i id="bar"></i></div>
-</div>
-<div class="hint">Arraste a página ou clique nas laterais para folhear</div>
+  <section class="book" id="book">
+    <div class="spread">
+      <div class="sheet left"><img id="leftImg" alt="Página esquerda"></div>
+      <div class="sheet right"><img id="rightImg" alt="Página direita"></div>
+      <div class="spine"></div>
+    </div>
+
+    <div class="page-turn" id="turn">
+      <div class="turn-face"><img id="turnFront"></div>
+      <div class="turn-face turn-back"><img id="turnBack"></div>
+    </div>
+  </section>
+
+  <button class="nav next" id="next" aria-label="Próxima">›</button>
+
+  <div class="thumbs" id="thumbs"></div>
+  <div class="hint">Arraste a página ou use ← → para folhear</div>
+</main>
 
 <script>
 const pages = ["pagina-01.jpg", "pagina-02.jpg", "pagina-03.jpg", "pagina-04.jpg", "pagina-05.jpg", "pagina-06.jpg", "pagina-07.jpg", "pagina-08.jpg", "pagina-09.jpg", "pagina-10.jpg", "pagina-11.jpg", "pagina-12.jpg", "pagina-13.jpg", "pagina-14.jpg", "pagina-15.jpg", "pagina-16.jpg", "pagina-17.jpg", "pagina-18.jpg", "pagina-19.jpg", "pagina-20.jpg", "pagina-21.jpg", "pagina-22.jpg", "pagina-23.jpg", "pagina-24.jpg", "pagina-25.jpg", "pagina-26.jpg", "pagina-27.jpg", "pagina-28.jpg", "pagina-29.jpg", "pagina-30.jpg", "pagina-31.jpg", "pagina-32.jpg", "pagina-33.jpg", "pagina-34.jpg", "pagina-35.jpg", "pagina-36.jpg", "pagina-37.jpg", "pagina-38.jpg", "pagina-39.jpg", "pagina-40.jpg", "pagina-41.jpg", "pagina-42.jpg", "pagina-43.jpg", "pagina-44.jpg", "pagina-45.jpg", "pagina-46.jpg"];
-const book = document.getElementById('book');
-const counter = document.getElementById('counter');
-const bar = document.getElementById('bar');
-let current = 0;
-let startX = null;
+const total = pages.length;
 
-pages.forEach((src, i) => {
-  const p = document.createElement('div');
-  p.className = 'page';
-  p.style.zIndex = pages.length - i;
-  const img = document.createElement('img');
-  img.src = src;
-  img.alt = `Página ${i+1}`;
-  p.appendChild(img);
-  book.appendChild(p);
+const leftImg = document.getElementById('leftImg');
+const rightImg = document.getElementById('rightImg');
+const turn = document.getElementById('turn');
+const turnFront = document.getElementById('turnFront');
+const turnBack = document.getElementById('turnBack');
+const counter = document.getElementById('counter');
+const book = document.getElementById('book');
+const thumbs = document.getElementById('thumbs');
+
+let spreadStart = 0; // zero-based, always even on desktop
+let mobile = window.matchMedia('(max-width:600px)').matches;
+let busy = false;
+let dragX = null;
+let dragging = false;
+
+function isMobile() {
+  return window.matchMedia('(max-width:600px)').matches;
+}
+
+function src(i) {
+  return i >= 0 && i < total ? pages[i] : null;
+}
+
+function render() {
+  mobile = isMobile();
+
+  if (mobile) {
+    const i = Math.min(spreadStart, total - 1);
+    rightImg.src = src(i);
+    rightImg.alt = `Página ${i+1}`;
+    leftImg.removeAttribute('src');
+    counter.textContent = `${i+1} / ${total}`;
+  } else {
+    const l = Math.min(spreadStart, total - 1);
+    const r = Math.min(spreadStart + 1, total - 1);
+    leftImg.src = src(l);
+    rightImg.src = src(r);
+    leftImg.alt = `Página ${l+1}`;
+    rightImg.alt = `Página ${r+1}`;
+    counter.textContent = `${l+1} – ${r+1} / ${total}`;
+  }
+
+  document.querySelectorAll('.thumb').forEach((t,i) => {
+    t.classList.toggle('active', i === spreadStart || i === spreadStart + 1);
+  });
+}
+
+function buildThumbs() {
+  thumbs.innerHTML = '';
+  pages.forEach((p,i) => {
+    const t = document.createElement('div');
+    t.className = 'thumb';
+    t.innerHTML = `<img src="${p}" alt="Página ${i+1}"><div>${i+1}</div>`;
+    t.addEventListener('click', () => {
+      spreadStart = isMobile() ? i : (i % 2 === 0 ? i : i-1);
+      render();
+      t.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    });
+    thumbs.appendChild(t);
+  });
+}
+
+function turnPage(dir) {
+  if (busy) return;
+  const step = isMobile() ? 1 : 2;
+  const target = spreadStart + dir * step;
+
+  if (target < 0 || target >= total) return;
+
+  busy = true;
+
+  if (dir > 0) {
+    const currentRight = isMobile() ? spreadStart : spreadStart + 1;
+    const nextRight = isMobile() ? target : target + 1;
+
+    turnFront.src = src(currentRight);
+    turnBack.src = src(nextRight);
+    turn.classList.add('active');
+    turn.style.transformOrigin = 'left center';
+
+    requestAnimationFrame(() => {
+      turn.style.transition = 'transform .82s cubic-bezier(.18,.72,.15,1)';
+      turn.style.transform = 'rotateY(-180deg)';
+    });
+
+    setTimeout(() => {
+      spreadStart = target;
+      turn.style.transition = 'none';
+      turn.style.transform = 'rotateY(0deg)';
+      turn.classList.remove('active');
+      render();
+      busy = false;
+    }, 850);
+  } else {
+    // Reverse animation: reveal the previous spread from left to right.
+    const previous = target;
+    const currentLeft = spreadStart;
+
+    turnFront.src = src(previous);
+    turnBack.src = src(currentLeft);
+    turn.classList.add('active');
+    turn.style.transformOrigin = 'right center';
+    turn.style.transform = 'rotateY(180deg)';
+
+    requestAnimationFrame(() => {
+      turn.style.transition = 'transform .82s cubic-bezier(.18,.72,.15,1)';
+      turn.style.transform = 'rotateY(0deg)';
+    });
+
+    setTimeout(() => {
+      spreadStart = target;
+      turn.style.transition = 'none';
+      turn.classList.remove('active');
+      render();
+      busy = false;
+    }, 850);
+  }
+}
+
+document.getElementById('next').onclick = () => turnPage(1);
+document.getElementById('prev').onclick = () => turnPage(-1);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') {e.preventDefault();turnPage(1)}
+  if (e.key === 'ArrowLeft') {e.preventDefault();turnPage(-1)}
+  if (e.key === 'Home') {spreadStart=0;render()}
+  if (e.key === 'End') {spreadStart=isMobile()?total-1:(total%2?total-1:total-2);render()}
 });
 
-const pageEls = [...document.querySelectorAll('.page')];
-
-let dragStartX = null;
-let dragStartCurrent = 0;
-let isDragging = false;
-let dragMoved = false;
-
-function update(){
-  pageEls.forEach((p, i) => {
-    p.classList.toggle('flipped', i < current);
-    p.classList.remove('dragging');
-    p.style.removeProperty('transform');
-  });
-  counter.textContent = `${Math.min(current+1, pages.length)} / ${pages.length}`;
-  bar.style.width = `${(current/(pages.length-1))*100}%`;
-}
-
-function animateTurn(direction){
-  const target = direction > 0 ? current : current - 1;
-  if(direction > 0 && current >= pages.length) return;
-  if(direction < 0 && current <= 0) return;
-
-  const p = pageEls[target];
-  p.classList.add('flipping');
-
-  // A tiny lift makes the sheet feel lighter and less "mechanical".
-  p.style.transition = 'transform .76s cubic-bezier(.18,.76,.17,1), box-shadow .55s ease';
-  p.style.boxShadow = direction > 0
-    ? 'inset -22px 0 34px rgba(0,0,0,.10), 14px 5px 30px rgba(0,0,0,.20)'
-    : 'inset 22px 0 34px rgba(0,0,0,.08), -10px 5px 25px rgba(0,0,0,.16)';
-
-  current += direction;
-  update();
-
-  // Reapply the subtle shadow to the sheet that is moving.
-  requestAnimationFrame(() => {
-    p.classList.add('flipping');
-    p.style.boxShadow = direction > 0
-      ? 'inset -22px 0 34px rgba(0,0,0,.10), 14px 5px 30px rgba(0,0,0,.20)'
-      : 'inset 22px 0 34px rgba(0,0,0,.08), -10px 5px 25px rgba(0,0,0,.16)';
-  });
-
-  setTimeout(() => {
-    p.classList.remove('flipping');
-    p.style.removeProperty('box-shadow');
-  }, 780);
-}
-
-function next(){ animateTurn(1); }
-function prev(){ animateTurn(-1); }
-
-document.getElementById('next').onclick = next;
-document.getElementById('prev').onclick = prev;
-document.getElementById('fullscreen').onclick = () => {
+document.getElementById('fullBtn').onclick = () => {
   if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
   else document.exitFullscreen?.();
 };
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
-  if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
-  if (e.key === 'Home') { current=0; update(); }
-  if (e.key === 'End') { current=pages.length; update(); }
-});
+document.getElementById('gridBtn').onclick = () => {
+  thumbs.scrollIntoView({behavior:'smooth',block:'nearest'});
+};
 
-// Mouse/touch: drag naturally toward the next/previous page.
+// Drag/swipe
 book.addEventListener('pointerdown', e => {
-  dragStartX = e.clientX;
-  dragStartCurrent = current;
-  isDragging = true;
-  dragMoved = false;
+  if (busy) return;
+  dragX = e.clientX;
+  dragging = true;
   book.setPointerCapture?.(e.pointerId);
 });
-
-book.addEventListener('pointermove', e => {
-  if(!isDragging || dragStartX === null) return;
-  const dx = e.clientX - dragStartX;
-  if(Math.abs(dx) < 5) return;
-  dragMoved = true;
-
-  const turningForward = dx < 0;
-  const idx = turningForward ? current : current - 1;
-  if(idx < 0 || idx >= pages.length) return;
-
-  const p = pageEls[idx];
-  p.classList.add('dragging');
-
-  const progress = Math.min(Math.abs(dx) / (book.clientWidth * .72), 1);
-  const angle = turningForward ? -progress * 178 : -180 + progress * 178;
-  p.style.transform = `rotateY(${angle}deg)`;
-  p.style.boxShadow = turningForward
-    ? `inset -${12 + progress*24}px 0 ${20 + progress*28}px rgba(0,0,0,.12), ${progress*18}px 5px ${progress*28}px rgba(0,0,0,.18)`
-    : `inset ${12 + progress*24}px 0 ${20 + progress*28}px rgba(0,0,0,.08), -${progress*18}px 5px ${progress*24}px rgba(0,0,0,.14)`;
-});
-
 book.addEventListener('pointerup', e => {
-  if(!isDragging) return;
-  const dx = e.clientX - dragStartX;
-  isDragging = false;
-
-  if(Math.abs(dx) > book.clientWidth * .18) {
-    if(dx < 0) next(); else prev();
-  } else {
-    // Snap the page gently back.
-    update();
+  if (!dragging) return;
+  const dx = e.clientX - dragX;
+  dragging = false;
+  dragX = null;
+  if (Math.abs(dx) > 55) {
+    if (dx < 0) turnPage(1);
+    else turnPage(-1);
   }
-  dragStartX = null;
 });
-
 book.addEventListener('pointercancel', () => {
-  isDragging = false;
-  dragStartX = null;
-  update();
+  dragging = false; dragX = null;
 });
 
-// Click only when it wasn't a real drag.
-book.addEventListener('click', e => {
-  if(dragMoved){ dragMoved = false; return; }
-  const rect = book.getBoundingClientRect();
-  if (e.clientX - rect.left > rect.width/2) next();
-  else prev();
+window.addEventListener('resize', () => {
+  const wasMobile = mobile;
+  mobile = isMobile();
+  if (wasMobile !== mobile) {
+    spreadStart = mobile ? Math.min(spreadStart,total-1) : (spreadStart % 2 ? spreadStart-1 : spreadStart);
+    render();
+  }
 });
-update();
+
+buildThumbs();
+render();
 </script>
 </body>
 </html>
