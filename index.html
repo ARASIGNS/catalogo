@@ -35,7 +35,7 @@ button:hover{background:#2a2a2a;transform:translateY(-1px)}
   perspective:2200px;padding:18px;
 }
 .book{
-  position:relative;height:min(86vh,780px);aspect-ratio:1/1;
+  position:relative;height:min(84vh,820px);aspect-ratio:595.5/842.2;
   transform-style:preserve-3d;filter:drop-shadow(0 25px 30px rgba(0,0,0,.55));
 }
 .page{
@@ -45,7 +45,7 @@ button:hover{background:#2a2a2a;transform:translateY(-1px)}
   border-radius:3px 10px 10px 3px;
   box-shadow:inset -12px 0 20px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.2);
 }
-.page img{width:100%;height:100%;object-fit:cover;display:block}
+.page img{width:100%;height:100%;object-fit:contain;display:block}
 .page::after{
   content:"";position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(90deg,rgba(0,0,0,.08),transparent 18%,transparent 80%,rgba(0,0,0,.12));
@@ -65,7 +65,7 @@ button:hover{background:#2a2a2a;transform:translateY(-1px)}
   .brand{font-size:14px}
   .controls button{padding:8px 9px;font-size:12px}
   .counter{min-width:70px;font-size:12px}
-  .stage{height:calc(100vh - 108px);padding:8px}
+  .stage{height:calc(100vh - 108px);padding:8px;align-items:center;justify-content:center}
   .book{width:min(94vw,78vh);height:auto;aspect-ratio:1/1}
   .hint{display:none}
 }
